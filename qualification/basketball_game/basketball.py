@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from operator import itemgetter
-
 def player_leave_cmp(p1, p2):
     if p1['minutes'] != p2['minutes']:
         return p2['minutes'] - p1['minutes']
@@ -24,7 +22,9 @@ def pick_players(players, rotations, team_size):
     
     for i, p in enumerate(reversed(players)):
         p['rank'] = i + 1
-        
+    
+    players.sort(key=lambda k: k['rank'])
+    
     for p in players:
         if p['rank'] % 2 == 1:
             team_1.append(p)
@@ -43,11 +43,11 @@ def pick_players(players, rotations, team_size):
                 lineup_1[i]['minutes'] += 1
                 lineup_2[i]['minutes'] += 1
             
-            leaves_1 = sorted(lineup_1, cmp=player_leave_cmp)[0:1][0]
-            leaves_2 = sorted(lineup_2, cmp=player_leave_cmp)[0:1][0]
+            leaves_1 = sorted(lineup_1, cmp=player_leave_cmp)[0]
+            leaves_2 = sorted(lineup_2, cmp=player_leave_cmp)[0]
             
-            enters_1 = sorted(team_1, cmp=player_enters_cmp)[0:1][0]
-            enters_2 = sorted(team_2, cmp=player_enters_cmp)[0:1][0] 
+            enters_1 = sorted(team_1, cmp=player_enters_cmp)[0]
+            enters_2 = sorted(team_2, cmp=player_enters_cmp)[0] 
             
             lineup_1.remove(leaves_1)
             lineup_1.append(enters_1)
@@ -64,7 +64,7 @@ def pick_players(players, rotations, team_size):
     players_in_field.extend(lineup_2)
 
     return " ".join(p['name'] for p in sorted(players_in_field, 
-                                              key=itemgetter('name')))
+                                              key=lambda k: k['name']))
 
 if __name__ == "__main__":
     t = int(raw_input().strip())
